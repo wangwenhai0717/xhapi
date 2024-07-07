@@ -1,0 +1,9 @@
+server:
+  port: 8111
+  servlet:
+    context-path: /api
+
+xhapi:
+  client:
+    access-key: xunhao
+    secret-key: qwertyui

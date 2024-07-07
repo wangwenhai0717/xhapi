@@ -1,0 +1,31 @@
+server:
+  port: 8090
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: api_route
+          uri: http://106.54.193.109:8111
+          predicates:
+            - Path=/api/**
+#          filters:
+#            - AddRequestHeader=xunhao, awag
+#            - AddRequestParameter=name, dog
+#            - name: CircuitBreaker #jiangji
+#              args:
+#                name: myCircuitBreaker
+#                fallbackUri: forward:/fallback
+#        - id: xunhao-fallback
+#          uri: https://
+#          predicates:
+#            -Path=/fallback
+
+dubbo:
+  application:
+    name: dubbo-springboot-demo-provider
+  protocol:
+    name: dubbo
+    port: 22223
+  registry:
+    id: nacos-registry
+    address: nacos://localhost:8848
