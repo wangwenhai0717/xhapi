@@ -16,8 +16,12 @@ import com.xunhao.project.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.xunhao.project.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
 import com.xunhao.project.model.enums.InterfaceInfoEnum;
 import com.xunhao.project.service.InterfaceInfoService;
+import com.xunhao.project.service.UserInterfaceInfoService;
 import com.xunhao.project.service.UserService;
+import com.xunhao.project.utils.NetUtils;
 import com.xunhao.xhapiclientsdk.client.XhapiClient;
+import com.xunhao.xhapiclientsdk.constant.MyUrl;
+import com.xunhao.xhapiclientsdk.strategy.BaseContext;
 import com.xunhao.xhapicommon.model.entity.InterfaceInfo;
 import com.xunhao.xhapicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +44,12 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private UserInterfaceInfoService userInterfaceInfoService;
+
+    @Resource
+    private BaseContext baseContext;
 
     // region 增删改查
 
@@ -157,11 +167,6 @@ public class InterfaceInfoController {
         if (oldInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        com.xunhao.xhapiclientsdk.entity.User user = new com.xunhao.xhapiclientsdk.entity.User();
-        String name = xhapiClient.getUserNameByPost(user);
-        if (StringUtils.isBlank(name)) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"接口调用失败");
-        }
         //修改上下线状态
         InterfaceInfo info = new InterfaceInfo();
         info.setId(id);
@@ -239,14 +244,12 @@ public class InterfaceInfoController {
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
         XhapiClient client = new XhapiClient(accessKey, secretKey);
-        //我们只需要进行测试调用，所以我们需要解析传递过来的参数
-        Gson gson = new Gson();
-        //将用户请求参数转换为User对象
-        com.xunhao.xhapiclientsdk.entity.User user = gson.fromJson(userRequestParams, com.xunhao.xhapiclientsdk.entity.User.class);
-        //调用client的getUsernameByPost方法,传入用户对象，获取用户名
-        // TODO 需要修改为根据测试地址调用
-        String usernameByPost = client.getUserNameByPost(user);
-        return ResultUtils.success(usernameByPost);
+        baseContext.setApiClient(client);
+        String url = oldInfo.getUrl();
+        if (MyUrl.IP_URL.equals(url) && StringUtils.isBlank(userRequestParams)) {
+            userRequestParams = "{'ip':'" +(NetUtils.getIpAddress(request) + "'}");
+        }
+        String result = baseContext.handler(url, userRequestParams);
+        return ResultUtils.success(result);
     }
-
     }

@@ -45,6 +45,12 @@
             <artifactId>xhapi-common</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.xunhao</groupId>
+            <artifactId>xhapi-backed</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

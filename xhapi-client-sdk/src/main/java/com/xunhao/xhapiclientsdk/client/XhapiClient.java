@@ -3,15 +3,21 @@ package com.xunhao.xhapiclientsdk.client;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import com.xunhao.project.common.ErrorCode;
+import com.xunhao.project.exception.BusinessException;
 import com.xunhao.xhapiclientsdk.entity.User;
 import com.xunhao.xhapiclientsdk.utils.SignUtil;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
+@Data
 public class XhapiClient {
 
     private static final String GATEWAY_HOST = "http://106.54.193.109:8090";
@@ -24,38 +30,37 @@ public class XhapiClient {
         this.secretKey = secretKey;
     }
 
-    public String getNameByGet(String name) {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("name", name);
-        return HttpUtil.get(GATEWAY_HOST + "/api/name/",paramMap);
+    private <T> String getJson(T arg) {
+        return JSONUtil.toJsonStr(arg);
     }
 
-    public String getNameByPost(String name) {
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("name", name);
-        return HttpUtil.post(GATEWAY_HOST + "/api/name/",paramMap);
+    private Map<String,String> getHeaderMap(String body) {
+        HashMap<String,String> hashMap = new HashMap<>();
+        hashMap.put("accessKey", accessKey);
+        //不能直接发送
+//        hashMap.put("secretKey", secretKey);
+        hashMap.put("nonce", RandomUtil.randomNumbers(4));
+        try {
+            hashMap.put("body", URLEncoder.encode(body, "utf8"));
+        } catch (Exception e) {
+            log.error("加密传递参数出错,异常信息为: " + e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "加密传递参数出错");
+        }
+        hashMap.put("timestamp", String.valueOf(System.currentTimeMillis()/1000));
+        hashMap.put("sign", SignUtil.getSign(body,secretKey));
+        return hashMap;
     }
 
-    public String getUserNameByPost(User user) {
-        String json = JSONUtil.toJsonStr(user);
-        HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + "/api/name/user")
+    public <T> String definitionRequest(String url, T arg) {
+        String json = getJson(arg);
+        HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + url)
                 .charset(StandardCharsets.UTF_8)
                 .body(json)
                 .addHeaders(getHeaderMap(json))
                 .execute();
         String result = httpResponse.body();
+        log.info("SDK 返回状态为: {}", httpResponse.getStatus());
+        log.info("SDK 返回结果为: {}", result);
         return result;
-    }
-
-    private Map<String,String> getHeaderMap(String body) {
-        Map<String,String> hashMap = new HashMap<>();
-        hashMap.put("accessKey", accessKey);
-        //不能直接发送
-//        hashMap.put("secretKey", secretKey);
-        hashMap.put("nonce", RandomUtil.randomNumbers(4));
-        hashMap.put("body", body);
-        hashMap.put("timestamp", String.valueOf(System.currentTimeMillis()/1000));
-        hashMap.put("sign", SignUtil.getSign(body,secretKey));
-        return hashMap;
     }
 }

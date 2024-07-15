@@ -70,7 +70,6 @@ public class UserInterfaceInfoController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = userService.getLoginUser(request);
         long id = deleteRequest.getId();
         // 判断是否存在
         UserInterfaceInfo oldInfo = userInterfaceInfoService.getById(id);
