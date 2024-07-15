@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-@MapperScan("com.xunhao.api.mapper")
+@MapperScan("com.xunhao.project.mapper")
 public class MyBatisPlusConfig {
 
     /**
