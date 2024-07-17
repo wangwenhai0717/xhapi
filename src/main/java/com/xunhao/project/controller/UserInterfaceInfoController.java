@@ -1,14 +1,18 @@
 package com.xunhao.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.xunhao.project.annotation.AuthCheck;
 import com.xunhao.project.common.*;
 import com.xunhao.project.constant.CommonConstant;
 import com.xunhao.project.constant.UserConstant;
 import com.xunhao.project.exception.BusinessException;
 import com.xunhao.project.exception.ThrowUtils;
+import com.xunhao.project.model.dto.user.UserSignUpdateRequest;
+import com.xunhao.project.model.dto.user.UserUpdateRequest;
 import com.xunhao.project.model.dto.userInterfaceInfo.UserInterfaceInfoAddRequest;
 import com.xunhao.project.model.dto.userInterfaceInfo.UserInterfaceInfoQueryRequest;
 import com.xunhao.project.model.dto.userInterfaceInfo.UserInterfaceInfoUpdateRequest;
@@ -22,6 +26,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/interfaceInfo")
@@ -152,4 +159,37 @@ public class UserInterfaceInfoController {
         return ResultUtils.success(info);
     }
 
+    /**
+     * 签到功能
+     */
+    @PostMapping("/sign")
+    public BaseResponse<Boolean> UserSign(@RequestBody UserSignUpdateRequest signUpdateRequest) {
+        if (signUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User user = userService.getById(signUpdateRequest.getId());
+        if (user.getLeftNum() == 100) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "积分已上限");
+        }
+        Date oldTime = user.getSignTime();
+        Date nowTime = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat compare = new SimpleDateFormat("yyyy-MM-dd");
+        String currentTime = compare.format(nowTime);
+        String oldDateTime = compare.format(oldTime);
+        if (currentTime.equals(oldDateTime)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "今日已签到");
+        }
+        user.setLeftNum(user.getLeftNum() + 1);
+        Date parse = null;
+        try {
+            String format = dateFormat.format(nowTime);
+            parse = dateFormat.parse(format);
+        } catch (ParseException e) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "签到时间转换异常");
+        }
+        user.setSignTime(parse);
+        userService.updateById(user);
+        return ResultUtils.success(true);
     }
+}

@@ -1,5 +1,6 @@
 package com.xunhao.project.controller;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xunhao.project.annotation.AuthCheck;
 import com.xunhao.project.constant.UserConstant;
@@ -277,6 +278,29 @@ public class UserController {
         BeanUtils.copyProperties(userUpdateMyRequest, user);
         user.setId(loginUser.getId());
         boolean result = userService.updateById(user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+
+    /**
+     * 更新密钥
+     */
+    @PostMapping("/update/key")
+    public BaseResponse<Boolean> updateKey(@RequestBody UserUpdateRequest userUpdateRequest, HttpServletRequest request) {
+        if (userUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        String account = loginUser.getUserAccount();
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        UpdateWrapper<User> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", loginUser.getId());
+        wrapper.eq("userAccount", account);
+        wrapper.set("accessKey", accessKey);
+        wrapper.set("secretKey", secretKey);
+        boolean result = userService.update(wrapper);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }

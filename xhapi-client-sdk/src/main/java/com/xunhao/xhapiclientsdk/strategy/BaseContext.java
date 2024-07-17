@@ -3,7 +3,6 @@ package com.xunhao.xhapiclientsdk.strategy;
 import com.xunhao.xhapiclientsdk.client.XhapiClient;
 import com.xunhao.xhapiclientsdk.constant.MyUrl;
 import com.xunhao.xhapiclientsdk.strategy.impl.HoroscopeStrategy;
-import com.xunhao.xhapiclientsdk.strategy.impl.IpInfoStrategy;
 import com.xunhao.xhapiclientsdk.strategy.impl.Present;
 
 import java.util.Map;
@@ -20,11 +19,9 @@ public class BaseContext {
     private static final Present PRESENT = new Present();
 
     static {
-        strategyMap.put(MyUrl.IP_URL, new IpInfoStrategy());
         strategyMap.put(MyUrl.HOROSCOPE, new HoroscopeStrategy());
         strategyMap.put(MyUrl.RANDOM_SCENERY, PRESENT);
         strategyMap.put(MyUrl.MO_YU, PRESENT);
-        strategyMap.put(MyUrl.TALK_LOVE, PRESENT);
         strategyMap.put(MyUrl.RANDOM_WALLPAPER, PRESENT);
     }
 

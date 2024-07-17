@@ -3,7 +3,6 @@ package com.xunhao.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.gson.Gson;
 import com.xunhao.project.annotation.AuthCheck;
 import com.xunhao.project.common.*;
 import com.xunhao.project.constant.CommonConstant;
@@ -18,9 +17,7 @@ import com.xunhao.project.model.enums.InterfaceInfoEnum;
 import com.xunhao.project.service.InterfaceInfoService;
 import com.xunhao.project.service.UserInterfaceInfoService;
 import com.xunhao.project.service.UserService;
-import com.xunhao.project.utils.NetUtils;
 import com.xunhao.xhapiclientsdk.client.XhapiClient;
-import com.xunhao.xhapiclientsdk.constant.MyUrl;
 import com.xunhao.xhapiclientsdk.strategy.BaseContext;
 import com.xunhao.xhapicommon.model.entity.InterfaceInfo;
 import com.xunhao.xhapicommon.model.entity.User;
@@ -37,16 +34,13 @@ import javax.servlet.http.HttpServletRequest;
 public class InterfaceInfoController {
 
     @Resource
+    private UserInterfaceInfoService userInterfaceInfoService;
+
+    @Resource
     private InterfaceInfoService interfaceInfoService;
 
     @Resource
-    private XhapiClient xhapiClient;
-
-    @Resource
     private UserService userService;
-
-    @Resource
-    private UserInterfaceInfoService userInterfaceInfoService;
 
     @Resource
     private BaseContext baseContext;
@@ -245,10 +239,8 @@ public class InterfaceInfoController {
         String secretKey = loginUser.getSecretKey();
         XhapiClient client = new XhapiClient(accessKey, secretKey);
         baseContext.setApiClient(client);
+        userInterfaceInfoService.addUserInvokeInterface(loginUser.getId(), id);
         String url = oldInfo.getUrl();
-        if (MyUrl.IP_URL.equals(url) && StringUtils.isBlank(userRequestParams)) {
-            userRequestParams = "{'ip':'" +(NetUtils.getIpAddress(request) + "'}");
-        }
         String result = baseContext.handler(url, userRequestParams);
         return ResultUtils.success(result);
     }

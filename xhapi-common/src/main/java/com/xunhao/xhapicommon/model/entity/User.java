@@ -62,6 +62,16 @@ public class User implements Serializable {
     private String accessKey;
 
     /**
+     * 积分
+     */
+    private Integer leftNum;
+
+    /**
+     * 签到时间
+     */
+    private Date signTime;
+
+    /**
      * 用户角色
      */
     private String userRole;

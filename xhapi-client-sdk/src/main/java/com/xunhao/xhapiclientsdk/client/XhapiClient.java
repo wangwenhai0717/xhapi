@@ -4,9 +4,6 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONUtil;
-import com.xunhao.project.common.ErrorCode;
-import com.xunhao.project.exception.BusinessException;
-import com.xunhao.xhapiclientsdk.entity.User;
 import com.xunhao.xhapiclientsdk.utils.SignUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +41,6 @@ public class XhapiClient {
             hashMap.put("body", URLEncoder.encode(body, "utf8"));
         } catch (Exception e) {
             log.error("加密传递参数出错,异常信息为: " + e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "加密传递参数出错");
         }
         hashMap.put("timestamp", String.valueOf(System.currentTimeMillis()/1000));
         hashMap.put("sign", SignUtil.getSign(body,secretKey));

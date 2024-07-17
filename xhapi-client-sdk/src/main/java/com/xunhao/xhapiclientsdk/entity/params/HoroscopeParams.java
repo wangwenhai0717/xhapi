@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * 请求参数类
- * @author YJL
+ * @author xh
  * @version 1.0
  */
 @Data

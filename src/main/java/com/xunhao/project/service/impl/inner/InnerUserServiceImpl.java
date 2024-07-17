@@ -28,4 +28,18 @@ public class InnerUserServiceImpl implements InnerUserService {
         queryWrapper.eq("accessKey", accessKey);
         return userMapper.selectOne(queryWrapper);
     }
+
+    @Override
+    public boolean getLeftNum(long userId) {
+        if (userId <= 0){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "用户不存在");
+        }
+        User user = userMapper.selectById(userId);
+        if (user.getLeftNum() <= 0) {
+            return false;
+        }
+        return true;
+    }
+
+
 }

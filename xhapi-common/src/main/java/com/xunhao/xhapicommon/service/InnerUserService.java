@@ -10,4 +10,9 @@ public interface InnerUserService {
      * @return
      */
     User getInvokeUser(String accessKey);
+
+    /**
+     * 查询是否有调用次数
+     */
+    boolean getLeftNum(long userId);
 }

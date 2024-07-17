@@ -49,7 +49,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1");
     private static final Long FIVE_MINUTES = 60 * 5L;
-    private static final String INTERFACE_HOST = "http://localhost:8111";
+    private static final String INTERFACE_HOST = "http://106.54.193.109:8111";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -125,10 +125,14 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if (interfaceInfo == null) {
             return handleNoAuth(response);
         }
-        // 5.请求转发，调用模拟接口
-        // Mono<Void> filter = chain.filter(exchange);
+        //判断是否还有调用次数
+        boolean leftCount = userService.getLeftNum(invokeUser.getId());
+        if (!leftCount) {
+            return handleNoAuth(response);
+        }
+        // 响应日志
         log.info("响应" + response.getStatusCode());
-        // 6.响应日志
+        // 5.请求转发，调用模拟接口
         return handleResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());
     }
 
