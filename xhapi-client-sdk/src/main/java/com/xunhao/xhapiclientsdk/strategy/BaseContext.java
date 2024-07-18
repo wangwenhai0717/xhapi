@@ -19,9 +19,10 @@ public class BaseContext {
     private static final Present PRESENT = new Present();
 
     static {
+        strategyMap.put(MyUrl.MO_YU, PRESENT);
         strategyMap.put(MyUrl.HOROSCOPE, new HoroscopeStrategy());
         strategyMap.put(MyUrl.RANDOM_SCENERY, PRESENT);
-        strategyMap.put(MyUrl.MO_YU, PRESENT);
+        strategyMap.put(MyUrl.UserName, PRESENT);
         strategyMap.put(MyUrl.RANDOM_WALLPAPER, PRESENT);
     }
 

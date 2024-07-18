@@ -31,4 +31,9 @@ public interface MyUrl {
      * 获取星座运势
      */
     String HOROSCOPE = "/api/xhapi/getHoroscope";
+
+    /**
+     * 获取用户名
+     */
+    String UserName = "/api/xhapi/user";
 }

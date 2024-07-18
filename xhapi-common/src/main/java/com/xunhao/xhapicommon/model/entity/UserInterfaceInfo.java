@@ -22,21 +22,25 @@ public class UserInterfaceInfo implements Serializable {
     /**
      * 调用用户 id
      */
+    @TableField(value = "user_id")
     private Long userId;
 
     /**
      * 接口 id
      */
+    @TableField(value = "interface_info_id")
     private Long interfaceInfoId;
 
     /**
      * 总调用次数
      */
+    @TableField(value = "total_num")
     private Integer totalNum;
 
     /**
      * 剩余调用次数
      */
+    @TableField(value = "left_num")
     private Integer leftNum;
 
     /**
@@ -47,11 +51,13 @@ public class UserInterfaceInfo implements Serializable {
     /**
      * 创建时间
      */
+    @TableField(value = "create_time")
     private Date createTime;
 
     /**
      * 更新时间
      */
+    @TableField(value = "update_time")
     private Date updateTime;
 
     /**
