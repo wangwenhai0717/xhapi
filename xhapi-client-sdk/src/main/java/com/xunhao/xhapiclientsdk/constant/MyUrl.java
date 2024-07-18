@@ -7,10 +7,6 @@ package com.xunhao.xhapiclientsdk.constant;
  * @version 1.0
  */
 public interface MyUrl {
-    /**
-     * ip接口
-     */
-    String IP_URL = "/api/xhapi/getIpInfo";
 
     /**
      * 获取随机风景图片
@@ -35,5 +31,5 @@ public interface MyUrl {
     /**
      * 获取用户名
      */
-    String UserName = "/api/xhapi/user";
+    String UserName = "/api/xhapi/name";
 }
