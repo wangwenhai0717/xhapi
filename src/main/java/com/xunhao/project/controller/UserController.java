@@ -1,5 +1,7 @@
 package com.xunhao.project.controller;
 
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xunhao.project.annotation.AuthCheck;
@@ -35,6 +37,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.xunhao.project.service.impl.UserServiceImpl.SALT;
 
 @RestController
 @RequestMapping("/user")
@@ -138,7 +142,7 @@ public class UserController {
         BeanUtils.copyProperties(userAddRequest, user);
         // 默认密码 12345678
         String defaultPassword = "12345678";
-        String encryptPassword = DigestUtils.md5DigestAsHex((UserServiceImpl.SALT + defaultPassword).getBytes());
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + defaultPassword).getBytes());
         user.setUserPassword(encryptPassword);
         boolean result = userService.save(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -293,8 +297,8 @@ public class UserController {
         }
         User loginUser = userService.getLoginUser(request);
         String account = loginUser.getUserAccount();
-        String accessKey = loginUser.getAccessKey();
-        String secretKey = loginUser.getSecretKey();
+        String accessKey = DigestUtil.md5Hex(SALT + userUpdateRequest.getUserAccount() + RandomUtil.randomNumbers(5));
+        String secretKey = DigestUtil.md5Hex(SALT + userUpdateRequest.getUserAccount() + RandomUtil.randomNumbers(8));
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
         wrapper.eq("id", loginUser.getId());
         wrapper.eq("userAccount", account);

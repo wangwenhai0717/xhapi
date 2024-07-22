@@ -48,4 +48,9 @@ public class InterfaceInfoUpdateRequest implements Serializable {
      */
     private String method;
 
+    /**
+     * host
+     */
+    private String host;
+
 }

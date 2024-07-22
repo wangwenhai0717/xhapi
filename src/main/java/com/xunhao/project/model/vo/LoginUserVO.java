@@ -1,8 +1,9 @@
 package com.xunhao.project.model.vo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 已登录用户视图（脱敏）
@@ -46,6 +47,26 @@ public class LoginUserVO implements Serializable {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * secretKey
+     */
+    private String secretKey;
+
+    /**
+     * accessKey
+     */
+    private String accessKey;
+
+    /**
+     * 积分
+     */
+    private Integer leftNum;
+
+    /**
+     * 用户账号
+     */
+    private String userAccount;
 
     private static final long serialVersionUID = 1L;
 }

@@ -13,6 +13,7 @@ public interface MyUrl {
      */
     String RANDOM_SCENERY = "/api/xhapi/RandomScenery";
 
+
     /**
      * 获取摸鱼日历
      */
