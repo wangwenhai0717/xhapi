@@ -1,5 +1,7 @@
-package com.xunhao.project;
+package com.xunhao.project.config;
 
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.URLUtil;
 import com.xunhao.xhapiclientsdk.utils.SignUtil;
 import com.xunhao.xhapicommon.model.entity.InterfaceInfo;
 import com.xunhao.xhapicommon.model.entity.User;
@@ -49,18 +51,16 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1");
     private static final Long FIVE_MINUTES = 60 * 5L;
-    private static final String INTERFACE_HOST = "http://106.54.193.109:8111";
+    private static final String INTERFACE_HOST = "http://localhost:8111";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         // 1.请求日志
         ServerHttpRequest request = exchange.getRequest();
-        String path = INTERFACE_HOST + request.getPath().value();
-        String method = request.getMethod().toString();
+        String path = request.getPath().value();
         log.info("请求唯一标识：" + request.getId());
-        log.info("请求路径：" + path);
-        log.info("请求方法：" + request.getMethod());
+        log.info("请求路径：" + (INTERFACE_HOST + path));
         log.info("请求参数：" + request.getQueryParams());
         String sourceAddress = request.getLocalAddress().getHostString();
         log.info("请求远程地址：" + request.getRemoteAddress());
@@ -70,9 +70,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         // 拿到响应对象
         ServerHttpResponse response = exchange.getResponse();
         // 2.(黑白名单)
-        if (!IP_WHITE_LIST.contains(sourceAddress)) {
-            return handleNoAuth(response);
-        }
+//        if (!IP_WHITE_LIST.contains(sourceAddress)) {
+//            return handleNoAuth(response);
+//        }
         // 3.用户鉴权（判断ak、sk是否合法）
         // 从请求头中获取参数
         HttpHeaders headers = request.getHeaders();
@@ -80,7 +80,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         String nonce = headers.getFirst("nonce");
         String timestamp = headers.getFirst("timestamp");
         String sign = headers.getFirst("sign");
-        String body = headers.getFirst("body");
+        String body = URLUtil.decode(headers.getFirst("body"), CharsetUtil.CHARSET_UTF_8);
+        String method = headers.getFirst("method");
 
         // 先到数据库查是否已分配给用户
         User invokeUser = null;

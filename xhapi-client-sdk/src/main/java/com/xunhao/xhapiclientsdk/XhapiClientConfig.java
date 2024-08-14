@@ -1,7 +1,6 @@
 package com.xunhao.xhapiclientsdk;
 
 import com.xunhao.xhapiclientsdk.client.XhapiClient;
-import com.xunhao.xhapiclientsdk.strategy.BaseContext;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,10 +17,7 @@ public class XhapiClientConfig {
     private String secretKey;
 
     @Bean
-    public BaseContext xhapiClient() {
-        XhapiClient xhapiClient = new XhapiClient(accessKey, secretKey);
-        BaseContext baseContext = new BaseContext();
-        baseContext.setApiClient(xhapiClient);
-        return baseContext;
+    public XhapiClient getApiClient() {
+        return new XhapiClient(accessKey, secretKey);
     }
 }

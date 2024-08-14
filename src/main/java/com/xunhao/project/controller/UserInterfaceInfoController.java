@@ -1,10 +1,8 @@
 package com.xunhao.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.xunhao.project.annotation.AuthCheck;
 import com.xunhao.project.common.*;
 import com.xunhao.project.constant.CommonConstant;
@@ -12,7 +10,6 @@ import com.xunhao.project.constant.UserConstant;
 import com.xunhao.project.exception.BusinessException;
 import com.xunhao.project.exception.ThrowUtils;
 import com.xunhao.project.model.dto.user.UserSignUpdateRequest;
-import com.xunhao.project.model.dto.user.UserUpdateRequest;
 import com.xunhao.project.model.dto.userInterfaceInfo.UserInterfaceInfoAddRequest;
 import com.xunhao.project.model.dto.userInterfaceInfo.UserInterfaceInfoQueryRequest;
 import com.xunhao.project.model.dto.userInterfaceInfo.UserInterfaceInfoUpdateRequest;

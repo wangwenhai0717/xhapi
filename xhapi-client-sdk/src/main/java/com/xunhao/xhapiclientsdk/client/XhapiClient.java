@@ -1,5 +1,6 @@
 package com.xunhao.xhapiclientsdk.client;
 
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -8,16 +9,14 @@ import com.xunhao.xhapiclientsdk.utils.SignUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @Data
+@Slf4j
 public class XhapiClient {
-
-    private static final String GATEWAY_HOST = "http://106.54.193.109:8090";
 
     private String accessKey;
     private String secretKey;
@@ -27,11 +26,13 @@ public class XhapiClient {
         this.secretKey = secretKey;
     }
 
-    private <T> String getJson(T arg) {
-        return JSONUtil.toJsonStr(arg);
+    private static String GATEWAY_HOST = "http://localhost:8090";
+
+    public void setGatewayHost(String gatewayHost) {
+        GATEWAY_HOST = gatewayHost;
     }
 
-    private Map<String,String> getHeaderMap(String body) {
+    private Map<String,String> getHeaderMap(String body, String method) throws UnsupportedEncodingException{
         HashMap<String,String> hashMap = new HashMap<>();
         hashMap.put("accessKey", accessKey);
         //不能直接发送
@@ -44,19 +45,16 @@ public class XhapiClient {
         }
         hashMap.put("timestamp", String.valueOf(System.currentTimeMillis()/1000));
         hashMap.put("sign", SignUtil.getSign(body,secretKey));
+        hashMap.put("method", method);
         return hashMap;
     }
 
-    public <T> String definitionRequest(String url, T arg) {
-        String json = getJson(arg);
+    public String invokeInterface(String params, String url, String method) throws UnsupportedEncodingException{
         HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + url)
-                .charset(StandardCharsets.UTF_8)
-                .body(json)
-                .addHeaders(getHeaderMap(json))
+                .header("Accept-Charset", CharsetUtil.UTF_8)
+                .addHeaders(getHeaderMap(params, method))
+                .body(params)
                 .execute();
-        String result = httpResponse.body();
-        log.info("SDK 返回状态为: {}", httpResponse.getStatus());
-        log.info("SDK 返回结果为: {}", result);
-        return result;
+        return JSONUtil.formatJsonStr(httpResponse.body());
     }
 }

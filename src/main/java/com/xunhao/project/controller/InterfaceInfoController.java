@@ -3,8 +3,10 @@ package com.xunhao.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sun.prism.impl.BaseContext;
 import com.xunhao.project.annotation.AuthCheck;
 import com.xunhao.project.common.*;
+import com.xunhao.project.config.gatewayConfig;
 import com.xunhao.project.constant.CommonConstant;
 import com.xunhao.project.constant.UserConstant;
 import com.xunhao.project.exception.BusinessException;
@@ -18,7 +20,6 @@ import com.xunhao.project.service.InterfaceInfoService;
 import com.xunhao.project.service.UserInterfaceInfoService;
 import com.xunhao.project.service.UserService;
 import com.xunhao.xhapiclientsdk.client.XhapiClient;
-import com.xunhao.xhapiclientsdk.strategy.BaseContext;
 import com.xunhao.xhapicommon.model.entity.InterfaceInfo;
 import com.xunhao.xhapicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/interface")
@@ -43,7 +45,9 @@ public class InterfaceInfoController {
     private UserService userService;
 
     @Resource
-    private BaseContext baseContext;
+    private gatewayConfig gatewayConfig;
+
+    private static final String GATEWAY_HOST = "http://localhost:8090";
 
     // region 增删改查
 
@@ -237,11 +241,20 @@ public class InterfaceInfoController {
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-        XhapiClient client = new XhapiClient(accessKey, secretKey);
-        baseContext.setApiClient(client);
-        userInterfaceInfoService.addUserInvokeInterface(loginUser.getId(), id);
+        XhapiClient xhapiClient = new XhapiClient(accessKey, secretKey);
+        xhapiClient.setGatewayHost(gatewayConfig.getHost());
         String url = oldInfo.getUrl();
-        String result = baseContext.handler(url, userRequestParams);
+        String method = oldInfo.getMethod();
+        String result = null;
+        try {
+            result = xhapiClient.invokeInterface(userRequestParams, url, method);
+            if (StringUtils.isBlank(result)) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "操作失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        userInterfaceInfoService.addUserInvokeInterface(loginUser.getId(), id);
         return ResultUtils.success(result);
     }
     }

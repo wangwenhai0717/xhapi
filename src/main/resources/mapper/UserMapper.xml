@@ -6,6 +6,8 @@
     <resultMap id="BaseResultMap" type="com.xunhao.xhapicommon.model.entity.User">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="unionId" column="unionId" jdbcType="VARCHAR"/>
+        <result property="userAccount" column="userAccount" jdbcType="VARCHAR"/>
+        <result property="userPassword" column="userPassword" jdbcType="VARCHAR"/>
         <result property="mpOpenId" column="mpOpenId" jdbcType="VARCHAR"/>
         <result property="userName" column="userName" jdbcType="VARCHAR"/>
         <result property="userAvatar" column="userAvatar" jdbcType="VARCHAR"/>
@@ -14,6 +16,7 @@
         <result property="secretKey" column="secretKey" jdbcType="VARCHAR"/>
         <result property="accessKey" column="accessKey" jdbcType="VARCHAR"/>
         <result property="leftNum" column="leftNum" jdbcType="INTEGER"/>
+        <result property="signTime" column="signTime" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
         <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
@@ -21,7 +24,7 @@
 
     <sql id="Base_Column_List">
         id,unionId,mpOpenId,secretKey,
-        userName,userAvatar,userProfile,accessKey,leftNum,
+        userName,userAvatar,userProfile,accessKey,leftNum,signTime,
         userRole,createTime,updateTime,isDelete
     </sql>
 </mapper>

@@ -24,6 +24,11 @@ public class InterfaceInfoAddRequest implements Serializable {
     private String url;
 
     /**
+     * 主机名
+     */
+    private String host;
+
+    /**
      * 请求头
      */
     private String requestHeader;
