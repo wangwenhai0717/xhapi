@@ -7,14 +7,19 @@ import com.xunhao.project.common.ErrorCode;
 import com.xunhao.project.exception.BusinessException;
 import com.xunhao.project.service.UserInterfaceInfoService;
 import com.xunhao.project.mapper.UserInterfaceInfoMapper;
+import com.xunhao.project.service.UserService;
 import com.xunhao.xhapicommon.model.entity.UserInterfaceInfo;
 import org.springframework.stereotype.Service;
 
-/**
- *
- */
+import javax.annotation.Resource;
+
+
 @Service
 public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoMapper, UserInterfaceInfo> implements UserInterfaceInfoService{
+
+    @Resource
+    private UserService userService;
+
     @Override
     public void validInterfaceInfo(UserInterfaceInfo info, boolean add) {
         if (info == null) {
@@ -48,6 +53,7 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         updateWrapper.gt("left_num", 0);
         //满足条件剩余次数减一，总调用次数加一
         updateWrapper.setSql("left_num = left_num - 1, total_num = total_num + 1");
+        userService.getUserLeftNum(userId);
         return this.update(updateWrapper);
     }
 

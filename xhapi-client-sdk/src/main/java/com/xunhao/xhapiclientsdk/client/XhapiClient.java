@@ -26,7 +26,7 @@ public class XhapiClient {
         this.secretKey = secretKey;
     }
 
-    private static String GATEWAY_HOST = "http://localhost:8090";
+    private static String GATEWAY_HOST = "http://106.54.193.109:8090";
 
     public void setGatewayHost(String gatewayHost) {
         GATEWAY_HOST = gatewayHost;
